@@ -1,0 +1,11 @@
+[vars]
+
+# k-means parameter
+kmax = 3
+
+# GA parameter
+budget = 50
+numOfInd = 20
+Ps = 0.2
+Pc = 0.8
+Pm = 0.02
