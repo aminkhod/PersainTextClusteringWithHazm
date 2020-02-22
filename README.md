@@ -1,7 +1,7 @@
 # PersainTextMingWithHazm
  I use Request Psychological Advice texts in Persian. I clean data and prepare it with the Hazm project. Then cluster them by using Genetic_Kmeans Algorithm and compare results with normal Kmeans and  Birch Algorithms.
 
-## # Genetic Algorithm on K-Means Clustering
+## Genetic Algorithm on K-Means Clustering
 ## The approaches which I used
 - Minmax normalization for standardization
 - Davies–Bouldin index for evaluation of each cluster
