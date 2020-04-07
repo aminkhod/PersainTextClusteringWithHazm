@@ -555,7 +555,7 @@ ax = fig.add_subplot(122)
 ax.scatter(X_PCA[:, 0], X_PCA[:, 1], c=colors[ClusterBirch], marker='*')
 
 
-# In[185]:
+# In[369]:
 
 
 
@@ -578,7 +578,7 @@ def WOA_clustering(X, numberOfCluster=3,iterations=100, numberOfWhale=20):
         #dataPointsInCluster=[[[] for cluster in range(numberOfCluster)] for whale in range(numberOfWhale)]
         dataPointsInCluster=np.zeros((numberOfWhale,numberOfCluster))
         bestWhale=0
-        bestDist=float("inf")
+        bestDist=np.infty
         startTime=time.time()
         for whale in range(numberOfWhale):
             dist=0.00
@@ -587,7 +587,7 @@ def WOA_clustering(X, numberOfCluster=3,iterations=100, numberOfWhale=20):
                 clusi.append(np.zeros((features)))
 
             for dataPoint in range(dataPoints):
-                bestEuclidianDist=float("inf")
+                bestEuclidianDist=np.infty
                 bestCluster=0
                 for cluster in range(numberOfCluster):
                     euclidDist=np.linalg.norm(centresOfwhale[whale,cluster]-X[dataPoint,:])
@@ -658,43 +658,60 @@ def WOA_clustering(X, numberOfCluster=3,iterations=100, numberOfWhale=20):
                     distance2Leader=abs(centresOfwhale[bestWhale,cluster]-centresOfwhale[whale,cluster])      # Eq. (2.5)
                     centresOfwhale[whale,cluster]=distance2Leader*math.exp(b*l)*math.cos(l*2*3.14)+centresOfwhale[bestWhale,cluster]
     #     print(time.time()-startTime)
-        startTime=time.time();
-
+        startTime=time.time()
+    mins = []
+    for i in range(numberOfCluster):
+        mins.append([np.infty])
     WOACluster=[0 for dataPoint in range(dataPoints)]
+    j = 0
     for dataPoint in range(dataPoints):
         d = []
         for i in range(numberOfCluster):
             d.append(np.linalg.norm(centresOfwhale[bestWhale,i]-X[dataPoint,:]))
+            if d[i] <= mins[i][0]:
+                mins[i][0] = d[i]
+                mins[i].append(j)
+        j += 1
         WOACluster[dataPoint] = d.index(min(d))
+    j = 0
+    for i in mins:
+#         print(i[1:],j)
+        WOACluster = pd.DataFrame(WOACluster)
+        WOACluster.iloc[i[1:]] = j
+        WOACluster = list(WOACluster[0])
+        j += 1
+
     return WOACluster
 
 
-# In[186]:
+# In[396]:
 
 
-X
-
-
-# In[202]:
-
-
-centresOfwhale=np.zeros((10,3,X.shape[1]))
+# centresOfwhale=[]
 # bestWhale = 0
-WOACluster = WOA_clustering(X.values, numberOfCluster=3,iterations=100, numberOfWhale=40)
-print(WOACluster)
+sill = -10
+for i in range(25):
+    labeles = WOA_clustering(X.values, numberOfCluster=8,iterations=100, numberOfWhale=30)
+    try:
+        sill1 = metrics.silhouette_score(X.values, labeles, metric='euclidean')
+        if sill1> sill:
+            sill =sill1
+            WOACluster = labeles
+    except:
+        1+1
+
+# print(WOACluster)
 # centresOfwhale
 
 
-# In[203]:
+# In[397]:
 
 
-# numberOfCluster=4,iterations=30
-# WOACluster = WOA_clustering(X=data.values, numberOfCluster=4,iterations=30, numberOfWhale=10)
 WOAKMeans_Sil = metrics.silhouette_score(X.values, WOACluster, metric='euclidean')
 WOAKMeans_Sil
 
 
-# In[199]:
+# In[398]:
 
 
 fig = plt.figure(figsize=(16, 8))
